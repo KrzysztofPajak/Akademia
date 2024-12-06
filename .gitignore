@@ -1,0 +1,37 @@
+# Terraform State
+*.tfstate
+*.tfstate.*
+
+# Backup plików stanu
+*.backup
+
+# Ustawienia lokalne
+.terraform/
+.terraform.lock.hcl
+
+# Pliki zmiennych lokalnych
+terraform.tfvars
+*.auto.tfvars
+
+# Pliki logów
+crash.log
+
+# Wygenerowane pliki planu
+*.tfplan
+
+# Dane sesji
+*.log
+*.out
+
+# IDE i edytory
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+
+# System operacyjny
+.terraformrc
+terraform.rc
