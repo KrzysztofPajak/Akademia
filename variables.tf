@@ -1,44 +1,67 @@
 variable "resource_group_name" {
-  description = "The name of the resource group"
+  description = "Nazwa grupy zasobów"
   type        = string
 }
 
 variable "location" {
-  description = "The location of the resource group"
+  description = "Lokalizacja grupy zasobów"
   type        = string
 }
 
-variable "environment" {
-  description = "The environment for the resources"
+variable "tags" {
+  description = "Tagi przypisane do grupy zasobów"
+  type        = map(string)
+  default     = {}
+}
+
+variable "key_vault_name" {
+  description = "The name of the Azure Key Vault."
+  type        = string
+}
+
+variable "secret_name" {
+  description = "The name of the secret to be stored in the Key Vault."
+  type        = string
+}
+
+variable "secret_value" {
+  description = "The value of the secret to be stored in the Key Vault."
+  type        = string
+}
+
+variable "sku_name" {
+  description = "The SKU name of the Key Vault."
   type        = string
 }
 
 variable "tenant_id" {
-  description = "Azure Tenant ID"
+  description = "The Azure Active Directory tenant ID."
   type        = string
 }
 
-variable "deploy_storage_account" {
-  description = "Flag to deploy Storage Account"
-  type        = bool
+variable "object_id" {
+  description = "The object ID of the user or service principal that will have access to the Key Vault."
+  type        = string
 }
 
-variable "deploy_sql_db" {
-  description = "Flag to deploy SQL Database"
+variable "enable_key_vault" {
+  description = "Enable or disable the Key Vault module."
   type        = bool
+  default     = true
 }
 
-variable "deploy_service_bus" {
-  description = "Flag to deploy Service Bus"
+variable "enable_blob_storage" {
+  description = "Enable or disable the Blob Storage module."
   type        = bool
+  default     = true
 }
 
-variable "deploy_key_vault" {
-  description = "Flag to deploy Key Vault"
-  type        = bool
+variable "storage_account_name" {
+  description = "The name of the storage account."
+  type        = string
 }
 
-variable "key_vault_secret_value" {
-  description = "The value of the Key Vault secret"
+variable "container_name" {
+  description = "The name of the blob container."
   type        = string
 }

@@ -1,64 +1,44 @@
-# We strongly recommend using the required_providers block to set the
-# Azure Provider source and version being used
-
 terraform {
-  required_version = ">= 0.12"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.0"
+      version = "~> 3.0"
     }
   }
 }
 
-# Configure the Microsoft Azure Provider
 provider "azurerm" {
   features {}
 }
 
-# Tworzenie grupy zasobów
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
+
+module "resource_group" {
+  source = "./modules/resource_group"
+  resource_group_name = var.resource_group_name
+  resource_location   = var.location
+  tags                = var.tags
 }
 
-# Moduł Storage Account
-module "storage_account" {
-  source              = "./modules/storage_account"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  environment         = var.environment
-  create              = var.deploy_storage_account
-  
-}
-
-# Moduł SQL Database z AAD
-module "sql_database" {
-  source              = "./modules/sql_database"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  environment         = var.environment
-  create              = var.deploy_sql_db
-  tenant_id   = var.tenant_id
-}
-
-# Moduł Service Bus
-module "service_bus" {
-  source              = "./modules/service_bus"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  environment         = var.environment
-  create              = var.deploy_service_bus
-  tenant_id           = var.tenant_id
-}
-
-# Moduł Key Vault
+# Conditionally include the Key Vault module
 module "key_vault" {
-  source                  = "./modules/key_vault"
-  resource_group_name     = azurerm_resource_group.rg.name
-  location                = azurerm_resource_group.rg.location
-  environment             = var.environment
-  key_vault_secret_value  = var.key_vault_secret_value
-  create                  = var.deploy_key_vault
-  tenant_id               = var.tenant_id
+  count                  = var.enable_key_vault ? 1 : 0
+  source                 = "./modules/azure_key_vault"
+  key_vault_name         = var.key_vault_name
+  location               = var.location
+  resource_group_name    = var.resource_group_name
+  tenant_id              = var.tenant_id
+  object_id              = var.object_id
+  secret_name            = var.secret_name
+  secret_value           = var.secret_value
+  sku_name               = var.sku_name
+}
+
+# Conditionally include the Blob Storage module
+module "blob_storage" {
+  count                = var.enable_blob_storage ? 1 : 0
+  source               = "./modules/blob_storage"
+  storage_account_name = var.storage_account_name
+  container_name       = var.container_name
+  resource_group_name  = var.resource_group_name
+  location             = var.location
 }
